@@ -1,0 +1,180 @@
+#!/usr/bin/env python3.2
+"""
+Author: Branon Santiago
+Anagrams Programming Assignment, Spring 2015
+
+"""
+import sys
+import struct 
+from enum import IntEnum
+import time
+MAX_TABLE_SIZE = 1000000
+def usage():
+	  """ Print usage string and exit() """
+	  print("Usage:\n%s dictionary\n" % sys.argv[0])
+	  sys.exit()
+
+def hash(data):
+	"""
+	Set the key for each word as the product of the prime-number value of each letter. 
+	Only words that belong to the same anagram class will have the same key.
+	"""
+	key = 1
+	for letter in data:
+		key = (key * Letters[letter])
+	return key
+
+class Letters(IntEnum):
+	e = 2
+	a = 3
+	r = 5
+	i = 7
+	o = 11
+	t = 13
+	n = 17
+	s = 19
+	l = 23
+	c = 29
+	u = 31
+	d = 37
+	p = 41
+	m = 43
+	h = 47
+	g = 53
+	b = 59 
+	f = 61
+	y = 67
+	w = 71
+	k = 73
+	v = 79
+	x = 83
+	z = 89
+	j = 97
+	q = 101
+
+class Word:
+	"""
+	Every word contains a string representing the word and a key associated with the product of its letter's values specified
+	by the Letters Enum
+	"""
+	def __init__(self,data,key):
+		self.next = None
+		self.data = data
+		self.key = key 
+
+	def getData(self):
+		"""
+		Return the string associated with this word
+		"""
+		return self.data
+
+class Anagram:
+	"""
+	Contains a linked list of all words that belong to the same anagram as well as how many exist
+	"""
+	def __init__(self):
+		self.size = 0
+		self.head = None
+		self.tail = None
+
+
+	def add_word(self,data,key):
+		"""
+		Insert a word into the anagram. If the anagram is empty, make the word the beginning and ending of the anagram.
+		Otherwise, add the word to the end of the linked list for this anagram. Update the size of the linked list for both cases.
+		"""
+		new_word = Word(data,key)
+		if self.size == 0:
+			self.head = new_word
+			self.tail = new_word
+		else:
+			self.tail.next = new_word
+			self.tail = new_word
+		self.size = self.size + 1
+
+	def print_anagram(self):
+		"""
+		Prints all of the words associated with the this anagram
+		"""
+		current_word = self.head
+		while current_word:
+			print(current_word.data, end = ' ')
+			current_word = current_word.next
+		print()
+
+class HashTable:
+	"""
+	A Hash Table for storing anagrams. Each entry is a linked list of words that make up an anagram class.
+	"""
+	def __init__(self,dictionary):
+		self.dictionary = dictionary
+		self.num_of_anagrams = 0
+		self.word_list = None  #stores all the words when opening the file
+		self.anagram_table = [Anagram() for x in range(MAX_TABLE_SIZE)] #stores all of the possible anagrams classes. Initiallized with one million empty entries
+
+
+	def open_file(self):
+		""" 
+		Opens dictionary, and calls usage() on error. 
+		"""
+		try:
+			self.word_list = open(self.dictionary, "r")
+		except:
+			print("Error opening file", sys.exc_info()[0])
+			usage()
+
+
+	def hash_words(self):
+		"""
+		Hashes each word from the dictionary into an anagram entry within the hash table, based on its key. 
+		Each anagram entry is a linked list made up of words that belong to that anagram. For every new entry to an anagram, update that 
+		anagram's count by 1 and add it to the end of that linked list. Before adding a word to an anagram entry, first check for collision
+		between two separate anagram classes. While every anagram has a different key, two different anagrams may incorrectly hash to the same 
+		table entry when we mod the key. To ensure unique anagrams for every table entry, we do the following until we have successfully
+		added the word into the table:
+		1) Check if the table entry has at least one word in it.
+			-If it is empty, just add the word in. If not, proceed to step 2.
+		2) Check that the word we are adding in has the same key as the first word of that anagram class. 
+			- If they are equal, we can safely add the word. If they are not equal, proceed to step 3
+		3) Use Linear Probing.
+			- Increment the key of the word we are adding in by 1 and repeat step 1-3 until we can add the word in safely. 
+		"""
+		with self.word_list as dictionary:
+			for line in dictionary:
+				if line != '\n': #we dont want any newline characters, so skip them
+					word_string = line.strip() #strip each line of whitespaces and newline characters so only the word remains
+					word_key = hash(word_string) #get the key of the word with the hash function
+					successful_probe = False 
+					while successful_probe == False:
+						if self.anagram_table[word_key%MAX_TABLE_SIZE].size > 0: #checks if the current table entry has at least one word
+							if word_key != self.anagram_table[word_key%MAX_TABLE_SIZE].head.key: #compare keys between the new word and the current anagram class
+								word_key = word_key + 1 #increment the key of the word we are trying to add in so that we can probe to the next entry in the table and try again
+							else:		
+								self.anagram_table[word_key%MAX_TABLE_SIZE].add_word(word_string,word_key) #Keys match so add the current word to the anagram class within the table
+								successful_probe = True
+						else:		
+							self.anagram_table[word_key%MAX_TABLE_SIZE].add_word(word_string,word_key) #Current table entry is empty, so add word in.
+							successful_probe = True
+
+					if self.anagram_table[word_key%MAX_TABLE_SIZE].size == 1: #if this is a new anagram class, increment the number of anagram classes
+						self.num_of_anagrams = self.num_of_anagrams + 1
+
+		for entry in self.anagram_table:
+			if entry.size > 5:
+				entry.print_anagram()
+		print("Number of anagram classes: %d" % self.num_of_anagrams)
+
+def main():
+	
+	t = time.clock()
+	match_anagrams = HashTable(sys.argv[1])
+	match_anagrams.open_file()
+	match_anagrams.hash_words()
+	elapsed_time = time.clock() - t
+	print("Total elapsed time: %f seconds" % elapsed_time)
+	
+
+# Standard boilerplate to run main()
+if __name__ == '__main__':
+	main()
+
