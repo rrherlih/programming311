@@ -58,36 +58,38 @@ def letter_to_num(l):
 def num_to_letter(n):
 	return(chr(n + 96))
 
-# def count_sort(A, k):
+# def count_sort(A, k, d):
 # 	c = []
 # 	for i in range(0, k + 1):
 # 		c.append(0)
 # 	for j in range(0, len(A)):
-# 		c[A[j]] = c[A[j]] + 1
+# 		c[A[j][d]] = c[A[j][d]] + 1
 # 	for i in range(1, k + 1):
 # 		c[i] = c[i] + c[i - 1]
 # 	b = []
 # 	for h in range(0, len(A)):
 # 		b.append(0)
 # 	for j in range(len(A) - 1, -1, -1):
-# 		b[c[A[j]] - 1] = A[j]
-# 		c[A[j]] = c[A[j]] - 1
+# 		b[c[A[j][d]] - 1] = A[j]
+# 		c[A[j][d]] = c[A[j][d]] - 1
 # 	return(b)
+def helper(word):
+	return str_array_to_nums(str_to_arr(word))
 
 def count_sort(A, k, d):
 	c = []
 	for i in range(0, k + 1):
 		c.append(0)
 	for j in range(0, len(A)):
-		c[A[j][d]] = c[A[j][d]] + 1
+		c[helper(A[j].get_sort())[d]] = c[helper(A[j].get_sort())[d]] + 1
 	for i in range(1, k + 1):
 		c[i] = c[i] + c[i - 1]
 	b = []
 	for h in range(0, len(A)):
 		b.append(0)
 	for j in range(len(A) - 1, -1, -1):
-		b[c[A[j][d]] - 1] = A[j]
-		c[A[j][d]] = c[A[j][d]] - 1
+		b[c[helper(A[j].get_sort())[d]] - 1] = A[j]
+		c[helper(A[j].get_sort())[d]] = c[helper(A[j].get_sort())[d]] - 1
 	return(b)
 
 def radix_sort(A, d):
@@ -95,6 +97,18 @@ def radix_sort(A, d):
 	for i in range(d - 1, -1, -1):
 		arr = count_sort(arr, 26, i)
 	return arr
+
+def sort_sorted(group):
+	# arr = []
+	# for i in group:
+	# 	arr.append(str_array_to_nums(str_to_arr(i.get_sort())))
+	if len(group) > 0:
+		rad = radix_sort(group, group[0].get_length())
+		# sort = []
+		# for i in rad:
+		# 	sort.append(num_array_to_str(i))
+		# return sort
+		return rad
 
 class Word_Group:
 
@@ -189,16 +203,7 @@ def str_compare(word1, word2):
 			return False
 	return True
 
-def sort_sorted(group):
-	arr = []
-	for i in group:
-		arr.append(str_array_to_nums(str_to_arr(i.get_sort())))
-	if len(group) > 0:
-		rad = radix_sort(arr, group[0].get_length())
-		sort = []
-		for i in rad:
-			sort.append(num_array_to_str(i))
-		return sort
+
 
 def main():
 	
@@ -232,7 +237,7 @@ def main():
 	
 	for i in l:
 		for j in range(0, len(i)):
-			print(sort_sorted(i)[j])
+			print(sort_sorted(i)[j].to_string())
 
 	# az_arr = [['d', 'o', 'g'], ['c', 'a', 't'], ['p', 'o', 't'], ['c', 'a', 'n']]
 	# z = []
