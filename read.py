@@ -117,7 +117,8 @@ class Word_Group:
 
 	def __init__(self, word):
 		self.word = arr_to_str(word)
-		self.sort = array_to_string(num_array_to_str(count_sort_w(str_array_to_nums(word), 26)))
+		# self.sort = array_to_string(num_array_to_str(count_sort_w(str_array_to_nums(word), 26)))
+		self.sort = slow_sort(word)
 		self.length = len(word)
 
 	def get_word(self):
@@ -156,8 +157,6 @@ def len_org(arr, mx):
 		len_array.append([])
 	for i in arr:
 		len_array[i.get_length()].append(i)
-	# for x in len_array[8]:
-	# 	print(x.to_string())
 	return len_array
 
 def split_groups(len_groups, target):
@@ -180,17 +179,6 @@ def split_groups(len_groups, target):
 # 				a.append(j.get_word())
 # 				group.remove(j)	
 # 		target.write(array_to_string(a) + '\n')	
-		
-def group_split(group, target):
-	a_arr = []
-	rest_arr = []
-	for i in group:
-		if i.get_sort()[0] == 'a':
-			a_arr.append(i)
-		else:
-			rest_arr.append(i)
-	write_anagrams(a_arr, target)
-	write_anagrams(rest_arr, target)
 	
 def array_to_string(arr):
 	s = ''
@@ -223,40 +211,13 @@ def write_anagrams(group, target):
 
 def main():
 
-	# w = Group_Array()
-	# fd = open_file(sys.argv[1])
-	# count = 0
-	# while True:
-	# 	if count%10000 == 0:
-	# 		print(count)
-	# 	count += 1
-	# 	x = fd.readline()
-	# 	if not x:
-	# 		break
-	# 	y = str_to_arr(x)
-	# 	w.group_append(Word_Group(y))
-	# if sys.argv[1] == 'dict1':
-	# 	target = open('anagrams1', 'w')
-	# if sys.argv[1] == 'dict2':
-	# 	target = open('anagrams2', 'w')
-
-	# l = len_org(w.get_group_array(), w.get_max_length())
-
-	# for i in l:
-	# 	x = sort_sorted(i)
-	# 	if len(x) > 0:
-	# 		print("Writing anagrams...")
-	# 		write_anagrams(x, target)
-	
-	# fd.close()
-	
 	w = Group_Array()
 	fd = open_file(sys.argv[1])
 	count = 0
 	while True:
-		if count%10000 == 0:
-			print(count)
-		count += 1
+		# if count%10000 == 0:
+		# 	print(count)
+		# count += 1
 		x = fd.readline()
 		if not x:
 			break
@@ -276,6 +237,32 @@ def main():
 			write_anagrams(x, target)
 	
 	fd.close()
+
+	# if sys.argv[1] == 'dict1':
+	# 	target = open('anagrams1', 'w')
+	# if sys.argv[1] == 'dict2':
+	# 	target = open('anagrams2', 'w')
+	
+	# fd = open_file(sys.argv[1])
+	# maxl = 2
+	# count = 1
+	# while count <= maxl:
+	# 	print("Words of length {}".format(count))
+	# 	w = Group_Array()
+	# 	while True:
+	# 		x = fd.readline()			
+	# 		if not x:
+	# 			break
+	# 		y = str_to_arr(x)
+	# 		if len(y) == count:				
+	# 			w.group_append(Word_Group(y))
+	# 		if len(y) > maxl:
+	# 			maxl = len(y)
+	# 	count += 1
+	# 	fd.seek(0)
+	# 	write_anagrams(sort_sorted(w.get_group_array()), target)	
+	
+	# fd.close()
 
 if __name__ == '__main__':
     main() 
