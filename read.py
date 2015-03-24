@@ -13,7 +13,7 @@ def slow_sort(word):
 				holder = word[i]
 				word[i] = word[j]
 				word[j] = holder
-	return(arr_to_str(word))
+	return(word)
 
 def str_to_arr(word):
 	a = []
@@ -34,11 +34,11 @@ def str_array_to_nums(s_arr):
 		n.append(letter_to_num(i))
 	return n
 
-def num_array_to_str(n_arr):
-	s = []
-	for i in n_arr:
-		s.append(num_to_letter(i))
-	return s
+# def num_array_to_str(n_arr):
+# 	s = []
+# 	for i in n_arr:
+# 		s.append(num_to_letter(i))
+# 	return s
 
 # class Tuple:
 
@@ -74,23 +74,20 @@ def count_sort_w(A, k):
 		c[A[j]] = c[A[j]] - 1
 	return(b)
 
-def helper(word):
-	return str_array_to_nums(str_to_arr(word))
-
 def count_sort(A, k, d):
 	c = []
 	for i in range(0, k + 1):
 		c.append(0)
 	for j in range(0, len(A)):
-		c[helper(A[j].get_sort())[d]] = c[helper(A[j].get_sort())[d]] + 1
+		c[A[j].get_sort()[d]] = c[A[j].get_sort()[d]] + 1
 	for i in range(1, k + 1):
 		c[i] = c[i] + c[i - 1]
 	b = []
 	for h in range(0, len(A)):
 		b.append(0)
 	for j in range(len(A) - 1, -1, -1):
-		b[c[helper(A[j].get_sort())[d]] - 1] = A[j]
-		c[helper(A[j].get_sort())[d]] = c[helper(A[j].get_sort())[d]] - 1
+		b[c[A[j].get_sort()[d]] - 1] = A[j]
+		c[A[j].get_sort()[d]] = c[A[j].get_sort()[d]] - 1
 	return(b)
 
 def radix_sort(A, d):
@@ -116,9 +113,8 @@ def sort_sorted(group):
 class Word_Group:
 
 	def __init__(self, word):
-		self.word = arr_to_str(word)
-		# self.sort = array_to_string(num_array_to_str(count_sort_w(str_array_to_nums(word), 26)))
-		self.sort = slow_sort(word)
+		self.word = word
+		self.sort = str_array_to_nums(slow_sort(str_to_arr(word)))
 		self.length = len(word)
 
 	def get_word(self):
@@ -195,6 +191,7 @@ def str_compare(word1, word2):
 	return True
 
 def write_anagrams(group, target):
+	comps = 0
 	while len(group) > 0:
 		holder = group[0]
 		arr = [holder.get_word()]	
@@ -203,11 +200,13 @@ def write_anagrams(group, target):
 			if len(group) == 0:
 				break
 			elif str_compare(holder.get_sort(), group[0].get_sort()) == True:
+				comps += 1
 				arr.append(group[0].get_word())
 				group.remove(group[0])
 			else:
 				break
 		target.write(array_to_string(arr) + '\n')
+	print(comps)
 
 def main():
 
@@ -218,11 +217,10 @@ def main():
 		# if count%10000 == 0:
 		# 	print(count)
 		# count += 1
-		x = fd.readline()
+		x = fd.readline().strip()
 		if not x:
 			break
-		y = str_to_arr(x)
-		w.group_append(Word_Group(y))
+		w.group_append(Word_Group(x))
 	if sys.argv[1] == 'dict1':
 		target = open('anagrams1', 'w')
 	if sys.argv[1] == 'dict2':
