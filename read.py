@@ -40,18 +40,6 @@ def str_array_to_nums(s_arr):
 # 		s.append(num_to_letter(i))
 # 	return s
 
-# class Tuple:
-
-# 	def __init__(self, t1, t2):
-# 		self.t1 = t1
-# 		self.t2 = t2
-
-# 	def get_t1(self):
-# 		return self.t1
-
-# 	def get_t2(self):
-# 		return self.t2
-
 def letter_to_num(l):
 	return(ord(l) - 96)
 
@@ -97,18 +85,18 @@ def radix_sort(A, d):
 	return arr
 
 def sort_sorted(group):
-	# arr = []
-	# for i in group:
-	# 	arr.append(str_array_to_nums(str_to_arr(i.get_sort())))
 	if len(group) > 0:
 		rad = radix_sort(group, group[0].get_length())
-		# sort = []
-		# for i in rad:
-		# 	sort.append(num_array_to_str(i))
-		# return sort
 		return rad
 	else:
 		return []
+
+# def sort_sorted(group):
+# 	if len(group.get_group_array()) > 0:
+# 		rad = radix_sort(group.get_group_array(), group.get_max_length())
+# 		return rad
+# 	else:
+# 		return []
 
 class Word_Group:
 
@@ -163,18 +151,6 @@ def split_groups(len_groups, target):
 				group_split(group, target)
 			else:
 				write_anagrams(group, target)	
-		
-		
-# def write_anagrams(group, target):
-# 	while len(group) > 0:
-# 		holder = group[0]
-# 		a = [holder.get_word()]	
-# 		group.remove(holder)	
-# 		for j in group:
-# 			if str_compare(holder.get_sort(), j.get_sort()) == True:
-# 				a.append(j.get_word())
-# 				group.remove(j)	
-# 		target.write(array_to_string(a) + '\n')	
 	
 def array_to_string(arr):
 	s = ''
@@ -191,7 +167,6 @@ def str_compare(word1, word2):
 	return True
 
 def write_anagrams(group, target):
-	comps = 0
 	while len(group) > 0:
 		holder = group[0]
 		arr = [holder.get_word()]	
@@ -199,14 +174,12 @@ def write_anagrams(group, target):
 		while True:
 			if len(group) == 0:
 				break
-			elif str_compare(holder.get_sort(), group[0].get_sort()) == True:
-				comps += 1
+			elif str_compare(holder.get_sort(), group[0].get_sort()) == True:				
 				arr.append(group[0].get_word())
 				group.remove(group[0])
 			else:
 				break
 		target.write(array_to_string(arr) + '\n')
-	print(comps)
 
 def main():
 
@@ -228,6 +201,8 @@ def main():
 
 	l = len_org(w.get_group_array(), w.get_max_length())
 
+	# x = sort_sorted(w)
+
 	for i in l:
 		x = sort_sorted(i)
 		if len(x) > 0:
@@ -235,32 +210,6 @@ def main():
 			write_anagrams(x, target)
 	
 	fd.close()
-
-	# if sys.argv[1] == 'dict1':
-	# 	target = open('anagrams1', 'w')
-	# if sys.argv[1] == 'dict2':
-	# 	target = open('anagrams2', 'w')
-	
-	# fd = open_file(sys.argv[1])
-	# maxl = 2
-	# count = 1
-	# while count <= maxl:
-	# 	print("Words of length {}".format(count))
-	# 	w = Group_Array()
-	# 	while True:
-	# 		x = fd.readline()			
-	# 		if not x:
-	# 			break
-	# 		y = str_to_arr(x)
-	# 		if len(y) == count:				
-	# 			w.group_append(Word_Group(y))
-	# 		if len(y) > maxl:
-	# 			maxl = len(y)
-	# 	count += 1
-	# 	fd.seek(0)
-	# 	write_anagrams(sort_sorted(w.get_group_array()), target)	
-	
-	# fd.close()
 
 if __name__ == '__main__':
     main() 
