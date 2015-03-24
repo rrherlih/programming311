@@ -58,21 +58,22 @@ def letter_to_num(l):
 def num_to_letter(n):
 	return(chr(n + 96))
 
-# def count_sort(A, k, d):
-# 	c = []
-# 	for i in range(0, k + 1):
-# 		c.append(0)
-# 	for j in range(0, len(A)):
-# 		c[A[j][d]] = c[A[j][d]] + 1
-# 	for i in range(1, k + 1):
-# 		c[i] = c[i] + c[i - 1]
-# 	b = []
-# 	for h in range(0, len(A)):
-# 		b.append(0)
-# 	for j in range(len(A) - 1, -1, -1):
-# 		b[c[A[j][d]] - 1] = A[j]
-# 		c[A[j][d]] = c[A[j][d]] - 1
-# 	return(b)
+def count_sort_w(A, k):
+	c = []
+	for i in range(0, k + 1):
+		c.append(0)
+	for j in range(0, len(A)):
+		c[A[j]] = c[A[j]] + 1
+	for i in range(1, k + 1):
+		c[i] = c[i] + c[i - 1]
+	b = []
+	for h in range(0, len(A)):
+		b.append(0)
+	for j in range(len(A) - 1, -1, -1):
+		b[c[A[j]] - 1] = A[j]
+		c[A[j]] = c[A[j]] - 1
+	return(b)
+
 def helper(word):
 	return str_array_to_nums(str_to_arr(word))
 
@@ -109,12 +110,14 @@ def sort_sorted(group):
 		# 	sort.append(num_array_to_str(i))
 		# return sort
 		return rad
+	else:
+		return []
 
 class Word_Group:
 
 	def __init__(self, word):
 		self.word = arr_to_str(word)
-		self.sort = slow_sort(word)
+		self.sort = array_to_string(num_array_to_str(count_sort_w(str_array_to_nums(word), 26)))
 		self.length = len(word)
 
 	def get_word(self):
@@ -167,16 +170,16 @@ def split_groups(len_groups, target):
 				write_anagrams(group, target)	
 		
 		
-def write_anagrams(group, target):
-	while len(group) > 0:
-		holder = group[0]
-		a = [holder.get_word()]	
-		group.remove(holder)	
-		for j in group:
-			if str_compare(holder.get_sort(), j.get_sort()) == True:
-				a.append(j.get_word())
-				group.remove(j)	
-		target.write(array_to_string(a) + '\n')	
+# def write_anagrams(group, target):
+# 	while len(group) > 0:
+# 		holder = group[0]
+# 		a = [holder.get_word()]	
+# 		group.remove(holder)	
+# 		for j in group:
+# 			if str_compare(holder.get_sort(), j.get_sort()) == True:
+# 				a.append(j.get_word())
+# 				group.remove(j)	
+# 		target.write(array_to_string(a) + '\n')	
 		
 def group_split(group, target):
 	a_arr = []
@@ -203,22 +206,56 @@ def str_compare(word1, word2):
 			return False
 	return True
 
-
+def write_anagrams(group, target):
+	while len(group) > 0:
+		holder = group[0]
+		arr = [holder.get_word()]	
+		group.remove(holder)
+		while True:
+			if len(group) == 0:
+				break
+			elif str_compare(holder.get_sort(), group[0].get_sort()) == True:
+				arr.append(group[0].get_word())
+				group.remove(group[0])
+			else:
+				break
+		target.write(array_to_string(arr) + '\n')
 
 def main():
-	
-	# word_array = []
-	# with open(sys.argv[1]) as fd:
-	# 	for line in fd:
-	# 		x = str_to_arr(fd.readline())
-	# 		if len(x) > 0:
-	# 			word_array.append(Word_Group(x))
-	# len_org(word_array)
 
+	# w = Group_Array()
+	# fd = open_file(sys.argv[1])
+	# count = 0
+	# while True:
+	# 	if count%10000 == 0:
+	# 		print(count)
+	# 	count += 1
+	# 	x = fd.readline()
+	# 	if not x:
+	# 		break
+	# 	y = str_to_arr(x)
+	# 	w.group_append(Word_Group(y))
+	# if sys.argv[1] == 'dict1':
+	# 	target = open('anagrams1', 'w')
+	# if sys.argv[1] == 'dict2':
+	# 	target = open('anagrams2', 'w')
+
+	# l = len_org(w.get_group_array(), w.get_max_length())
+
+	# for i in l:
+	# 	x = sort_sorted(i)
+	# 	if len(x) > 0:
+	# 		print("Writing anagrams...")
+	# 		write_anagrams(x, target)
+	
+	# fd.close()
+	
 	w = Group_Array()
 	fd = open_file(sys.argv[1])
 	count = 0
 	while True:
+		if count%10000 == 0:
+			print(count)
 		count += 1
 		x = fd.readline()
 		if not x:
@@ -231,21 +268,12 @@ def main():
 		target = open('anagrams2', 'w')
 
 	l = len_org(w.get_group_array(), w.get_max_length())
-	# for i in l[1]:
-	# 	print(i.get_word())
-	# split_groups(l, target)
-	
-	for i in l:
-		for j in range(0, len(i)):
-			print(sort_sorted(i)[j].to_string())
 
-	# az_arr = [['d', 'o', 'g'], ['c', 'a', 't'], ['p', 'o', 't'], ['c', 'a', 'n']]
-	# z = []
-	# for i in az_arr:
-	# 	z.append(str_array_to_nums(i))
-	# r = radix_sort(z, 3)
-	# for i in r:
-	# 	print(num_array_to_str(i))
+	for i in l:
+		x = sort_sorted(i)
+		if len(x) > 0:
+			print("Writing anagrams...")
+			write_anagrams(x, target)
 	
 	fd.close()
 
