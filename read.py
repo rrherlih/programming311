@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 
+""" Ryan Herlihy
+	CS311 Spring 2015
+	Anagrams
+"""
+
 import sys
 import words
 
