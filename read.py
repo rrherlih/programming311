@@ -250,7 +250,7 @@ def anagrams(fd, target):
 		if len(x) > 0:
 			print("Writing anagrams...")
 			write_anagrams(x, target)
-	
+
 	fd.close()
 
 
